@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Артём Козлов - Telegram Content Producer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #111111;
+            color: #FAFAFA;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .container {
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Cursor Follower */
+        .cursor-follower {
+            position: fixed;
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(124, 131, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease-out;
+        }
+
+        .cursor-follower.hovering {
+            transform: scale(2);
+        }
+
+        /* Background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(124, 131, 255, 0.2);
+            border-radius: 50%;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); opacity: 0.7; }
+            50% { transform: translateY(-20px) scale(1.1); opacity: 1; }
+        }
+
+        /* Background pattern */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            pointer-events: none;
+            background: 
+                radial-gradient(circle at 20% 50%, #7C83FF 1px, transparent 1px),
+                radial-gradient(circle at 80% 20%, #7C83FF 1px, transparent 1px),
+                radial-gradient(circle at 40% 80%, #7C83FF 1px, transparent 1px);
+            background-size: 400px 400px, 350px 350px, 450px 450px;
+            background-position: 0 0, 100px 100px, 200px 200px;
+        }
+
+        /* Section styles */
+        section {
+            padding: 60px 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-alt {
+            background: #0D0D0D;
+        }
+
+        .section-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Hero section */
+        .hero {
+            text-align: center;
+            padding: 48px 24px;
+        }
+
+        .hero-accent {
+            position: relative;
+            margin: 0 auto 32px;
+        }
+
+        .hero-line {
+            width: 4px;
+            height: 64px;
+            background: linear-gradient(to bottom, transparent, #7C83FF, transparent);
+            margin: 0 auto;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .hero-sparkle {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            color: #7C83FF;
+            animation: spin 3s linear infinite;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .hero-nickname {
+            color: #7C83FF;
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-nickname:hover {
+            transform: scale(1.1);
+        }
+
+        .typing-text {
+            color: #888888;
+            margin-bottom: 32px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .typing-cursor {
+            border-right: 2px solid #7C83FF;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { border-color: #7C83FF; }
+            51%, 100% { border-color: transparent; }
+        }
+
+        .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .contact-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: #EDEDED;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .contact-link:hover {
+            color: #7C83FF;
+            transform: scale(1.05) translateX(8px);
+        }
+
+        .contact-link svg {
+            transition: transform 0.3s ease;
+        }
+
+        .contact-link:hover svg {
+            animation: bounce 0.6s ease;
+        }
+
+        .arrow-icon {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .contact-link:hover .arrow-icon {
+            opacity: 1;
+        }
+
+        /* About section */
+        .about-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .ping-dot {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 8px;
+            height: 8px;
+            background: #7C83FF;
+            border-radius: 50%;
+            animation: ping 1s infinite;
+        }
+
+        @keyframes ping {
+            0% { transform: scale(1); opacity: 1; }
+            75%, 100% { transform: scale(2); opacity: 0; }
+        }
+
+        .about-text {
+            text-align: center;
+            color: #EDEDED;
+            margin-bottom: 32px;
+            line-height: 1.6;
+            transition: color 0.3s ease;
+        }
+
+        .about-text:hover {
+            color: #FAFAFA;
+        }
+
+        .qualities-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .quality-card {
+            text-align: center;
+            padding: 16px;
+            border: 1px solid #333;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quality-card:hover {
+            border-color: #7C83FF;
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(124, 131, 255, 0.2);
+        }
+
+        .quality-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to right, rgba(124, 131, 255, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .quality-card:hover::before {
+            opacity: 1;
+        }
+
+        .quality-icon {
+            width: 24px;
+            height: 24px;
+            margin: 0 auto 8px;
+            color: #7C83FF;
+            transition: all 0.3s ease;
+        }
+
+        .quality-card:hover .quality-icon {
+            transform: scale(1.1) rotate(12deg);
+        }
+
+        .quality-text {
+            font-size: 0.875rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Channels section */
+        .channels-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .activity-icon {
+            position: absolute;
+            right: -32px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            color: #7C83FF;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .channels-container {
+            overflow-x: auto;
+            padding-bottom: 16px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .channels-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .channels-scroll {
+            display: flex;
+            gap: 16px;
+            padding: 0 24px;
+            width: max-content;
+        }
+
+        .channel-card {
+            width: 256px;
+            background: #0D0D0D;
+            border: 1px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .channel-card:hover {
+            border-color: #7C83FF;
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(124, 131, 255, 0.2);
+        }
+
+        .channel-image {
+            height: 128px;
+            background: linear-gradient(135deg, rgba(124, 131, 255, 0.2), rgba(51, 51, 51, 0.2));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .channel-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .channel-card:hover .channel-image img {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .channel-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: linear-gradient(to top, #0D0D0D, transparent);
+        }
+
+        .channel-status {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #7C83FF;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .channel-content {
+            padding: 16px;
+        }
+
+        .channel-name {
+            font-size: 1.125rem;
+            margin-bottom: 4px;
+            transition: color 0.3s ease;
+        }
+
+        .channel-card:hover .channel-name {
+            color: #7C83FF;
+        }
+
+        .channel-desc {
+            color: #888888;
+            font-size: 0.875rem;
+            margin-bottom: 12px;
+            transition: color 0.3s ease;
+        }
+
+        .channel-card:hover .channel-desc {
+            color: #EDEDED;
+        }
+
+        .channel-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .channel-subs {
+            color: #7C83FF;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .external-icon {
+            color: #7C83FF;
+            transition: transform 0.3s ease;
+        }
+
+        .channel-card:hover .external-icon {
+            transform: rotate(45deg);
+        }
+
+        /* Skills section */
+        .skills-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .star-icon {
+            position: absolute;
+            right: -24px;
+            top: -4px;
+            width: 16px;
+            height: 16px;
+            color: #7C83FF;
+            animation: spin 4s linear infinite;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .skill-card {
+            background: #111111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-card:hover {
+            border-color: #7C83FF;
+            box-shadow: 0 10px 30px rgba(124, 131, 255, 0.1);
+        }
+
+        .skill-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to right, rgba(124, 131, 255, 0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .skill-card:hover::before {
+            opacity: 1;
+        }
+
+        .skill-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .skill-icon {
+            color: #7C83FF;
+            transition: all 0.3s ease;
+        }
+
+        .skill-card:hover .skill-icon {
+            transform: scale(1.1) rotate(12deg);
+        }
+
+        .skill-info {
+            flex: 1;
+        }
+
+        .skill-name-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .skill-name {
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .skill-card:hover .skill-name {
+            color: #7C83FF;
+        }
+
+        .skill-level {
+            color: #7C83FF;
+            font-size: 0.875rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .skill-bar {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(to right, #7C83FF, #6B73E6, #7C83FF);
+            background-size: 200% 100%;
+            border-radius: 4px;
+            transition: width 1s ease-out;
+            position: relative;
+            animation: gradient-shift 2s ease-in-out infinite alternate;
+        }
+
+        .skill-progress::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: ping 2s infinite;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .skill-desc {
+            color: #888888;
+            font-size: 0.875rem;
+            margin-top: 8px;
+            transition: color 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .skill-card:hover .skill-desc {
+            color: #EDEDED;
+        }
+
+        /* Projects section */
+        .projects-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .target-icon {
+            position: absolute;
+            left: -24px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            color: #7C83FF;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .projects-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .project-card {
+            background: #0D0D0D;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card:hover {
+            border-color: #7C83FF;
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(124, 131, 255, 0.2);
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, transparent, #7C83FF, transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-title {
+            font-size: 1.125rem;
+            margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .project-card:hover .project-title {
+            color: #7C83FF;
+        }
+
+        .project-desc {
+            color: #888888;
+            font-size: 0.875rem;
+            margin-bottom: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .project-card:hover .project-desc {
+            color: #EDEDED;
+        }
+
+        .project-stats {
+            display: flex;
+            gap: 16px;
+        }
+
+        .project-stat {
+            color: #7C83FF;
+            font-size: 0.875rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Reviews section */
+        .reviews-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 32px;
+        }
+
+        .reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .review-card {
+            border-left: 2px solid #7C83FF;
+            padding-left: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .review-card:hover {
+            padding-left: 24px;
+            box-shadow: 0 10px 30px rgba(124, 131, 255, 0.1);
+        }
+
+        .review-card::before {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 0;
+            width: 8px;
+            height: 8px;
+            background: #7C83FF;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .review-card:hover::before {
+            transform: scale(1.5);
+        }
+
+        .review-text {
+            font-style: italic;
+            color: #EDEDED;
+            margin-bottom: 12px;
+            transition: color 0.3s ease;
+        }
+
+        .review-card:hover .review-text {
+            color: #FAFAFA;
+        }
+
+        .review-author {
+            font-size: 0.875rem;
+            color: #888888;
+            transition: color 0.3s ease;
+        }
+
+        .review-card:hover .review-author {
+            color: #7C83FF;
+        }
+
+        /* Contact section */
+        .contact {
+            text-align: center;
+        }
+
+        .contact-title {
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .pointer-icon {
+            position: absolute;
+            right: -32px;
+            top: -4px;
+            width: 20px;
+            height: 20px;
+            color: #7C83FF;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .contact-desc {
+            color: #888888;
+            margin-bottom: 32px;
+            transition: color 0.3s ease;
+        }
+
+        .contact-desc:hover {
+            color: #EDEDED;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(to right, #7C83FF, #6B73E6);
+            color: white;
+            padding: 12px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button:hover {
+            background: linear-gradient(to right, #6B73E6, #7C83FF);
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(124, 131, 255, 0.3);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .cta-button:hover::before {
+            opacity: 0.2;
+        }
+
+        .cta-button svg {
+            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-button:hover svg:first-child {
+            transform: scale(1.1) rotate(12deg);
+        }
+
+        .cta-button:hover svg:last-child {
+            transform: translateX(4px);
+        }
+
+        .cta-text {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 1px solid #333;
+        }
+
+        .copyright {
+            color: #888888;
+            font-size: 0.875rem;
+            margin-bottom: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .copyright:hover {
+            color: #EDEDED;
+        }
+
+        .developer-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #7C83FF;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .developer-link:hover {
+            color: #6B73E6;
+            transform: scale(1.05);
+        }
+
+        .developer-link svg {
+            transition: transform 0.3s ease;
+        }
+
+        .developer-link:hover svg:first-child {
+            animation: bounce 0.6s ease;
+        }
+
+        .developer-link .arrow-icon {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .developer-link:hover .arrow-icon {
+            opacity: 1;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: #111111;
+            border: 1px solid rgba(124, 131, 255, 0.5);
+            border-radius: 12px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(124, 131, 255, 0.2);
+            transform: scale(0.8) translateY(20px);
+            transition: transform 0.4s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 192px;
+            object-fit: cover;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .modal-subs {
+            color: #7C83FF;
+            font-size: 0.875rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-desc {
+            color: #EDEDED;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .modal-stats {
+            background: #0D0D0D;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .modal-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .modal-stat:hover {
+            background: #111111;
+        }
+
+        .modal-stat-label {
+            color: #888888;
+        }
+
+        .modal-stat-value {
+            color: #7C83FF;
+            font-weight: 500;
+        }
+
+        .modal-cta {
+            width: 100%;
+            background: linear-gradient(to right, #7C83FF, #6B73E6);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .modal-cta:hover {
+            background: linear-gradient(to right, #6B73E6, #7C83FF);
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(124, 131, 255, 0.3);
+        }
+
+        .modal-cta svg {
+            transition: transform 0.3s ease;
+        }
+
+        .modal-cta:hover svg:first-child {
+            animation: bounce 0.6s ease;
+        }
+
+        .modal-cta:hover svg:last-child {
+            transform: rotate(45deg);
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
+            40%, 43% { transform: translateY(-10px); }
+            70% { transform: translateY(-5px); }
+            90% { transform: translateY(-2px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Click effect */
+        .click-effect {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #7C83FF;
+            border-radius: 50%;
+            animation: click-ripple 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes click-ripple {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            section {
+                padding: 40px 16px;
+            }
+            
+            .hero {
+                padding: 32px 16px;
+            }
+            
+            .channels-scroll {
+                padding: 0 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Cursor follower -->
+        <div class="cursor-follower"></div>
+
+        <!-- Background particles -->
+        <div class="particles" id="particles"></div>
+
+        <!-- Background pattern -->
+        <div class="bg-pattern"></div>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="section-container">
+                <div class="hero-accent">
+                    <div class="hero-line"></div>
+                    <svg class="hero-sparkle" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                </div>
+
+                <h1>Артём Козлов</h1>
+                <div class="hero-nickname">ArtMedia</div>
+                <div class="typing-text">
+                    <span class="typing-cursor" id="typing-text"></span>
+                </div>
+
+                <div class="contact-links">
+                    <a href="https://t.me/artmedia_pro" class="contact-link">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M21 6.5l-1 14.5-7-4-4 3v-2.5l4-3.5-6-3.5 14-4z"/>
+                        </svg>
+                        @artmedia_pro
+                        <svg class="arrow-icon" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M5 12h14m-7-7l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    <a href="mailto:artem.media.work@gmail.com" class="contact-link">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        artem.media.work@gmail.com
+                        <svg class="arrow-icon" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M5 12h14m-7-7l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="section-alt fade-in" data-section="about">
+            <div class="section-container">
+                <h2 class="about-title">
+                    Обо мне
+                    <span class="ping-dot"></span>
+                </h2>
+                <p class="about-text">
+                    Создаю и развиваю Telegram-каналы с упором на контент, стиль и органический рост. 
+                    Работаю на пересечении текста, аналитики и медиастратегии.
+                </p>
+                
+                <div class="qualities-grid">
+                    <div class="quality-card" onclick="createClickEffect(event)">
+                        <svg class="quality-icon" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        <div class="quality-text">Креативность</div>
+                    </div>
+                    <div class="quality-card" onclick="createClickEffect(event)">
+                        <svg class="quality-icon" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                            <polyline points="9,22 9,12 15,12 15,22"/>
+                        </svg>
+                        <div class="quality-text">Надёжность</div>
+                    </div>
+                    <div class="quality-card" onclick="createClickEffect(event)">
+                        <svg class="quality-icon" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                            <polyline points="22,4 12,14.01 9,11.01"/>
+                        </svg>
+                        <div class="quality-text">Результат</div>
+                    </div>
+                    <div class="quality-card" onclick="createClickEffect(event)">
+                        <svg class="quality-icon" fill="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12,6 12,12 16,14"/>
+                        </svg>
+                        <div class="quality-text">Пунктуальность</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Channels Section -->
+        <section class="fade-in" data-section="channels">
+            <div class="section-container">
+                <h2 class="channels-title">
+                    Мои каналы
+                    <svg class="activity-icon" fill="currentColor" viewBox="0 0 24 24">
+                        <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+                    </svg>
+                </h2>
+            </div>
+            <div class="channels-container">
+                <div class="channels-scroll" id="channels-scroll">
+                    <!-- Channels will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section class="section-alt fade-in" data-section="skills">
+            <div class="section-container">
+                <h2 class="skills-title">
+                    Навыки
+                    <svg class="star-icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                </h2>
+                
+                <div class="skills-list" id="skills-list">
+                    <!-- Skills will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section class="fade-in" data-section="projects">
+            <div class="section-container">
+                <h2 class="projects-title">
+                    Проекты
+                    <svg class="target-icon" fill="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="6"/>
+                        <circle cx="12" cy="12" r="2"/>
+                    </svg>
+                </h2>
+                
+                <div class="projects-list">
+                    <div class="project-card">
+                        <h3 class="project-title">MediaFlow Insider</h3>
+                        <p class="project-desc">Канал о digital-маркетинге и создании контента с аудиторией 25K+ подписчиков. Помогаю контент-мейкерам монетизировать навыки.</p>
+                        <div class="project-stats">
+                            <span class="project-stat">25K подписчиков</span>
+                            <span class="project-stat">350% рост</span>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <h3 class="project-title">ArtMedia Hub</h3>
+                        <p class="project-desc">Авторский канал о продюсировании и создании контента. Делюсь инсайтами и кейсами из практики digital-продюсирования.</p>
+                        <div class="project-stats">
+                            <span class="project-stat">15K подписчиков</span>
+                            <span class="project-stat">20% вовлечённость</span>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <h3 class="project-title">Корпоративные проекты</h3>
+                        <p class="project-desc">Работал над контент-стратегией для крупных IT-компаний и стартапов. Опыт создания контента для B2B сегмента.</p>
+                        <div class="project-stats">
+                            <span class="project-stat">Корпоративные каналы</span>
+                            <span class="project-stat">Премиум уровень</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reviews Section -->
+        <section class="fade-in" data-section="reviews">
+            <div class="section-container">
+                <h2 class="reviews-title">Отзывы</h2>
+                
+                <div class="reviews-list">
+                    <div class="review-card">
+                        <p class="review-text">"Артём создал для нас канал с нуля и довёл до 18K подписчиков за четыре месяца. Отличное качество контента и аналитики."</p>
+                        <div class="review-author">— Михаил Петров, CEO TechStartup</div>
+                    </div>
+                    <div class="review-card">
+                        <p class="review-text">"Профессиональный подход к стратегии и креативу. Рекомендую для амбициозных проектов в digital-сфере."</p>
+                        <div class="review-author">— Анна Сидорова, CMO DigitalAgency</div>
+                    </div>
+                    <div class="review-card">
+                        <p class="review-text">"Результат превзошёл ожидания. Канал стал генерировать качественные лиды уже через три недели работы."</p>
+                        <div class="review-author">— Владислав Иванов, Founder MediaCorp</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="section-alt fade-in" data-section="contact">
+            <div class="section-container contact">
+                <h2 class="contact-title">
+                    Открыт к проектам
+                    <svg class="pointer-icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/>
+                        <path d="M13 13l6 6"/>
+                    </svg>
+                </h2>
+                <p class="contact-desc">
+                    Готов обсудить ваш проект и помочь с развитием Telegram-канала
+                </p>
+                
+                <a href="https://t.me/artmedia_pro" class="cta-button">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M21 6.5l-1 14.5-7-4-4 3v-2.5l4-3.5-6-3.5 14-4z"/>
+                    </svg>
+                    <span class="cta-text">Написать в Telegram</span>
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M5 12h14m-7-7l7 7-7 7"/>
+                    </svg>
+                </a>
+                
+                <div class="footer">
+                    <div class="copyright">
+                        © 2025 Артём Козлов. Все права защищены.
+                    </div>
+                    
+                    <a href="https://t.me/polishkaaa_v" class="developer-link">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M21 6.5l-1 14.5-7-4-4 3v-2.5l4-3.5-6-3.5 14-4z"/>
+                        </svg>
+                        @polishkaaa_v
+                        <svg class="arrow-icon" width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M5 12h14m-7-7l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal for Channel Details -->
+        <div class="modal" id="channel-modal">
+            <div class="modal-content">
+                <div style="position: relative;">
+                    <img class="modal-image" id="modal-image" alt="">
+                    <button class="modal-close" onclick="closeModal()">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 64px; background: linear-gradient(to top, #111111, transparent);"></div>
+                </div>
+                
+                <div class="modal-body">
+                    <h3 class="modal-title" id="modal-title"></h3>
+                    <p class="modal-subs" id="modal-subs">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 010 7.75"/>
+                        </svg>
+                        <span id="modal-subs-text"></span>
+                    </p>
+                    
+                    <p class="modal-desc" id="modal-desc"></p>
+                    
+                    <div class="modal-stats" id="modal-stats">
+                        <!-- Stats will be populated by JavaScript -->
+                    </div>
+                    
+                    <a class="modal-cta" id="modal-cta" href="#" target="_blank" rel="noopener noreferrer">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M21 6.5l-1 14.5-7-4-4 3v-2.5l4-3.5-6-3.5 14-4z"/>
+                        </svg>
+                        Перейти к каналу
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                            <polyline points="15,3 21,3 21,9"/>
+                            <line x1="10" y1="14" x2="21" y2="3"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        const channels = [
+            {
+                name: "MediaFlow Insider",
+                subscribers: "25K",
+                description: "Digital-маркетинг и контент",
+                image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=200&fit=crop&crop=center",
+                url: "https://t.me/mediaflow_insider",
+                fullDescription: "Эксклюзивные инсайты о digital-маркетинге, создании контента и монетизации навыков. Разбираем кейсы успешных контент-мейкеров и стратегии продвижения.",
+                stats: {
+                    growth: "350% за год",
+                    engagement: "22%",
+                    posts: "180+ постов"
+                }
+            },
+            {
+                name: "ArtMedia Hub",
+                subscribers: "15K",
+                description: "Продюсирование и креатив",
+                image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=300&h=200&fit=crop&crop=center",
+                url: "https://t.me/artmedia_hub",
+                fullDescription: "Авторский канал о продюсировании контента, креативных процессах и развитии личного бренда. Практические советы от опытного digital-продюсера.",
+                stats: {
+                    growth: "280% за 10 месяцев",
+                    engagement: "20%",
+                    posts: "150+ постов"
+                }
+            },
+            {
+                name: "Tech Content Lab",
+                subscribers: "500K+",
+                description: "IT-контент и инновации",
+                image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=300&h=200&fit=crop&crop=center",
+                url: "https://t.me/tech_content_lab",
+                fullDescription: "Работа над контент-стратегией крупных IT-проектов. Опыт создания контента для технологических компаний и стартапов с миллионной аудиторией.",
+                stats: {
+                    growth: "Стабильный рост",
+                    engagement: "28%",
+                    posts: "Корпоративный контент"
+                }
+            },
+            {
+                name: "Startup Stories",
+                subscribers: "22K",
+                description: "Истории стартапов",
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=300&h=200&fit=crop&crop=center",
+                url: "https://t.me/startup_stories_art",
+                fullDescription: "Канал о стартапах, предпринимательстве и инновациях. Интервью с основателями, разбор бизнес-моделей и инсайты из мира технологического предпринимательства.",
+                stats: {
+                    growth: "200% за 8 месяцев",
+                    engagement: "18%",
+                    posts: "100+ постов"
+                }
+            }
+        ];
+
+        const skills = [
+            {
+                name: "Контент-стратегия",
+                level: 95,
+                icon: "🧠",
+                description: "Разработка долгосрочных стратегий контента, анализ аудитории и планирование контент-плана"
+            },
+            {
+                name: "TGStat & Аналитика", 
+                level: 90,
+                icon: "📊",
+                description: "Работа с TGStat, анализ метрик, A/B тестирование и оптимизация контента"
+            },
+            {
+                name: "Копирайтинг",
+                level: 100,
+                icon: "✍️",
+                description: "Создание продающих текстов, адаптация тона под аудиторию, сторителлинг"
+            },
+            {
+                name: "Дизайн & Figma",
+                level: 80,
+                icon: "🎨",
+                description: "Создание визуального контента, работа с Figma, базовый UI/UX дизайн"
+            },
+            {
+                name: "SMM & Продвижение",
+                level: 85,
+                icon: "📈",
+                description: "Органическое продвижение, кросс-промо, работа с блогерами и инфлюенсерами"
+            },
+            {
+                name: "Продюсирование",
+                level: 90,
+                icon: "💡",
+                description: "Управление проектами, координация команды, планирование контент-стратегии"
+            }
+        ];
+
+        // Variables
+        let selectedChannel = null;
+        let mousePosition = { x: 0, y: 0 };
+        let isHovering = false;
+        let typingIndex = 0;
+        const fullText = "Telegram Content Producer";
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initCursorFollower();
+            initParticles();
+            initTypingAnimation();
+            initScrollAnimations();
+            populateChannels();
+            populateSkills();
+            initModalEvents();
+        });
+
+        // Cursor follower
+        function initCursorFollower() {
+            const cursor = document.querySelector('.cursor-follower');
+            
+            document.addEventListener('mousemove', (e) => {
+                mousePosition.x = e.clientX;
+                mousePosition.y = e.clientY;
+                cursor.style.left = (e.clientX - 12) + 'px';
+                cursor.style.top = (e.clientY - 12) + 'px';
+            });
+
+            // Add hover effects
+            const hoverElements = document.querySelectorAll('a, button, .quality-card, .channel-card, .skill-card, .project-card, .review-card');
+            hoverElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    isHovering = true;
+                    cursor.classList.add('hovering');
+                });
+                el.addEventListener('mouseleave', () => {
+                    isHovering = false;
+                    cursor.classList.remove('hovering');
+                });
+            });
+        }
+
+        // Particles
+        function initParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 6; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = (i * 0.5) + 's';
+                particle.style.animationDuration = (2 + Math.random() * 2) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Typing animation
+        function initTypingAnimation() {
+            const typingElement = document.getElementById('typing-text');
+            
+            function typeNext() {
+                if (typingIndex < fullText.length) {
+                    typingElement.textContent = fullText.slice(0, typingIndex + 1);
+                    typingIndex++;
+                    setTimeout(typeNext, 100);
+                }
+            }
+            
+            setTimeout(typeNext, 1000);
+        }
+
+        // Scroll animations
+        function initScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        
+                        // Animate skill bars
+                        if (entry.target.dataset.section === 'skills') {
+                            animateSkillBars();
+                        }
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Populate channels
+        function populateChannels() {
+            const container = document.getElementById('channels-scroll');
+            
+            channels.forEach((channel, index) => {
+                const channelEl = document.createElement('div');
+                channelEl.className = 'channel-card';
+                channelEl.onclick = () => openModal(channel);
+                
+                channelEl.innerHTML = `
+                    <div class="channel-image">
+                        <img src="${channel.image}" alt="${channel.name}">
+                        <div class="channel-status"></div>
+                    </div>
+                    <div class="channel-content">
+                        <h3 class="channel-name">${channel.name}</h3>
+                        <p class="channel-desc">${channel.description}</p>
+                        <div class="channel-footer">
+                            <div class="channel-subs">${channel.subscribers} подписчиков</div>
+                            <svg class="external-icon" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                                <polyline points="15,3 21,3 21,9"/>
+                                <line x1="10" y1="14" x2="21" y2="3"/>
+                            </svg>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(channelEl);
+            });
+        }
+
+        // Populate skills
+        function populateSkills() {
+            const container = document.getElementById('skills-list');
+            
+            skills.forEach((skill, index) => {
+                const skillEl = document.createElement('div');
+                skillEl.className = 'skill-card';
+                
+                skillEl.innerHTML = `
+                    <div class="skill-header">
+                        <div class="skill-icon" style="font-size: 20px;">${skill.icon}</div>
+                        <div class="skill-info">
+                            <div class="skill-name-row">
+                                <span class="skill-name">${skill.name}</span>
+                                <span class="skill-level">${skill.level}%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" data-level="${skill.level}" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="skill-desc">${skill.description}</p>
+                `;
+                
+                container.appendChild(skillEl);
+            });
+        }
+
+        // Animate skill bars
+        function animateSkillBars() {
+            const progressBars = document.querySelectorAll('.skill-progress');
+            progressBars.forEach((bar, index) => {
+                setTimeout(() => {
+                    const level = bar.dataset.level;
+                    bar.style.width = level + '%';
+                }, index * 200);
+            });
+        }
+
+        // Modal functions
+        function openModal(channel) {
+            selectedChannel = channel;
+            const modal = document.getElementById('channel-modal');
+            
+            document.getElementById('modal-image').src = channel.image;
+            document.getElementById('modal-title').textContent = channel.name;
+            document.getElementById('modal-subs-text').textContent = channel.subscribers + ' подписчиков';
+            document.getElementById('modal-desc').textContent = channel.fullDescription;
+            document.getElementById('modal-cta').href = channel.url;
+            
+            // Populate stats
+            const statsContainer = document.getElementById('modal-stats');
+            statsContainer.innerHTML = '';
+            
+            Object.entries(channel.stats).forEach(([key, value]) => {
+                const statEl = document.createElement('div');
+                statEl.className = 'modal-stat';
+                
+                const label = key === 'growth' ? 'Рост' : 
+                             key === 'engagement' ? 'Вовлечённость' : 'Контент';
+                
+                statEl.innerHTML = `
+                    <span class="modal-stat-label">${label}:</span>
+                    <span class="modal-stat-value">${value}</span>
+                `;
+                
+                statsContainer.appendChild(statEl);
+            });
+            
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('channel-modal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+            selectedChannel = null;
+        }
+
+        function initModalEvents() {
+            const modal = document.getElementById('channel-modal');
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && selectedChannel) {
+                    closeModal();
+                }
+            });
+        }
+
+        // Click effect
+        function createClickEffect(event) {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            const effect = document.createElement('div');
+            effect.className = 'click-effect';
+            effect.style.left = x - 8 + 'px';
+            effect.style.top = y - 8 + 'px';
+            
+            event.currentTarget.appendChild(effect);
+            
+            setTimeout(() => {
+                effect.remove();
+            }, 600);
+        }
+    </script>
+</body>
+</html>
